@@ -29,11 +29,11 @@ spec:
               }
             vars:
               - key: inputString
-      # connectionDetails would be at this level (base/patch), if needed. They weren't needed when I directly used the Workspace.
       patches:
         - fromFieldPath: spec.inputString
           toFieldPath: spec.forProvider.vars[0].value
-        - fromFieldPath: spec.writeConnectionSecretToRef.name
+        # XR is cluster-scoped, so no namespace, but preserves the namespace & name of its related claim in labels.
+        - fromFieldPath: metadata.labels["crossplane.io/claim-name"]
           toFieldPath: spec.writeConnectionSecretToRef.name
-        - fromFieldPath: metadata.namespace
+        - fromFieldPath: metadata.labels["crossplane.io/claim-namespace"]
           toFieldPath: spec.writeConnectionSecretToRef.namespace
