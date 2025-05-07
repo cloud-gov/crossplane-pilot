@@ -1,0 +1,14 @@
+# From https://github.com/upbound/provider-terraform/blob/main/examples/transition/01-composition-tf-only/subnet-tf.yaml
+# I think this is an example of what a customer would spin up. I.e. a service instance.
+# This is called a Claim in Crossplane lingo: https://docs.crossplane.io/v1.19/concepts/claims/
+# When the customer creates this, Crossplane uses the Composition associated with the CompositeResourceDefinition to create a CompositeResource. This object references the claimName in the CompositeResourceDefinition, which is the API for this custom offering.
+# Binding is achieved by specifying writeConnectionSecretToRef: https://docs.crossplane.io/v1.19/concepts/claims/#claim-connection-secrets
+apiVersion: fedcloud.gsa.gov/v1alpha1
+kind: S3Bucket
+metadata:
+  name: james-bucket
+spec:
+  bucket_name: james-bucket
+  compositionSelector:
+    matchLabels:
+      implementation: opentofu

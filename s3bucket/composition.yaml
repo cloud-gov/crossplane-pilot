@@ -1,0 +1,33 @@
+# From https://github.com/upbound/provider-terraform/blob/main/examples/transition/01-composition-tf-only/composition.yaml
+# This is an implementation of the CompositeResourceDefinition. The spec.compositeTypeRef connects the two.
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: opentofu-xs3bucket.fedcloud.gsa.gov
+  labels:
+    provider: opentofu
+    implementation: opentofu
+spec:
+  compositeTypeRef:
+    apiVersion: fedcloud.gsa.gov/v1alpha1
+    kind: XS3Bucket
+  resources:
+    - name: opentofu-resource
+      base:
+        apiVersion: opentofu.upbound.io/v1beta1
+        kind: Workspace
+        spec:
+          forProvider:
+            source: Remote
+            # URL spec: https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
+            module: git::https://github.com/cloud-gov/crossplane-pilot//s3bucket/terraform?ref=main
+            vars:
+              - key: bucket_name
+      patches:
+        - fromFieldPath: spec.bucket_name
+          toFieldPath: spec.forProvider.vars[0].value
+        # XR is cluster-scoped, so no namespace, but preserves the namespace & name of its related claim in labels.
+        - fromFieldPath: metadata.labels["crossplane.io/claim-name"]
+          toFieldPath: spec.writeConnectionSecretToRef.name
+        - fromFieldPath: metadata.labels["crossplane.io/claim-namespace"]
+          toFieldPath: spec.writeConnectionSecretToRef.namespace
