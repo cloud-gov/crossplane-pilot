@@ -8,7 +8,7 @@ kind: S3Bucket
 metadata:
   name: james-bucket
 spec:
-  bucket_name: james-bucket
+  bucket_name: james-bucket-cloudgov-test-6cba62
   compositionSelector:
     matchLabels:
       implementation: opentofu

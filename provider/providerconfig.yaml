@@ -21,6 +21,12 @@ spec:
         name: crossplane-aws-credentials
         namespace: crossplane-system
       source: Secret
+    - filename: aws-config.ini
+      secretRef:
+        key: aws-config.ini
+        name: crossplane-aws-config
+        namespace: crossplane-system
+      source: Secret
   # This optional configuration block can be used to inject HCL into any
   # workspace that uses this provider config, for example to setup Terraform
   # providers.
@@ -36,6 +42,7 @@ spec:
     }
     // Configure AWS provider with credentials.
     provider "aws" {
-      shared_credentials_file = "${path.module}/aws-creds.ini"
+      shared_credentials_files = [ "${path.module}/aws-creds.ini" ]
+      shared_config_files = [ "${path.module}/aws-config.ini" ]
       region = "us-east-1"
     }

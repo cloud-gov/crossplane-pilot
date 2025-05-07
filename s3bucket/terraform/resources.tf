@@ -15,3 +15,11 @@ variable "bucket_name" {
 resource "aws_s3_bucket" "workspace_bucket" {
   bucket = var.bucket_name
 }
+
+provider "aws" {
+  shared_credentials_files = ["value"]
+}
+
+output "arn" {
+  value = aws_s3_bucket.workspace_bucket.arn
+}
