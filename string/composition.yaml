@@ -18,15 +18,9 @@ spec:
         kind: Workspace
         spec:
           forProvider:
-            source: Inline
-            module: |
-              variable "inputString" {
-                type = string
-              }
-              output "outputString" {
-                value = var.inputString
-                sensitive = true
-              }
+            source: Remote
+            # URL spec: https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
+            module: git::https://github.com/cloud-gov/crossplane-pilot//string?ref=main
             vars:
               - key: inputString
       patches:
