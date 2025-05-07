@@ -1,0 +1,23 @@
+# Direct usage of the workspace type, not through a Composition, to try testing secret writing.
+# Confirmed this works.
+apiVersion: opentofu.upbound.io/v1beta1
+kind: Workspace
+metadata:
+  name: jamesw
+spec:
+  forProvider:
+    source: Inline
+    module: |
+      variable "inputString" {
+        type = string
+      }
+      output "outputString" {
+        value = var.inputString
+        sensitive = true
+      }
+    vars:
+      - key: inputString
+        value: "Hello, world!"
+  writeConnectionSecretToRef:
+    name: claimed-string-secret
+    namespace: default

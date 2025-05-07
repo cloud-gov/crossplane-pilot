@@ -1,0 +1,39 @@
+# From https://github.com/upbound/provider-terraform/blob/main/examples/transition/01-composition-tf-only/composition.yaml
+# This is an implementation of the CompositeResourceDefinition. The spec.compositeTypeRef connects the two.
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: opentofu-xstring.fedcloud.gsa.gov
+  labels:
+    provider: opentofu
+    implementation: opentofu
+spec:
+  compositeTypeRef:
+    apiVersion: fedcloud.gsa.gov/v1alpha1
+    kind: XString
+  resources:
+    - name: opentofu-resource
+      base:
+        apiVersion: opentofu.upbound.io/v1beta1
+        kind: Workspace
+        spec:
+          forProvider:
+            source: Inline
+            module: |
+              variable "inputString" {
+                type = string
+              }
+              output "outputString" {
+                value = var.inputString
+                sensitive = true
+              }
+            vars:
+              - key: inputString
+      # connectionDetails would be at this level (base/patch), if needed. They weren't needed when I directly used the Workspace.
+      patches:
+        - fromFieldPath: spec.inputString
+          toFieldPath: spec.forProvider.vars[0].value
+        - fromFieldPath: spec.writeConnectionSecretToRef.name
+          toFieldPath: spec.writeConnectionSecretToRef.name
+        - fromFieldPath: metadata.namespace
+          toFieldPath: spec.writeConnectionSecretToRef.namespace

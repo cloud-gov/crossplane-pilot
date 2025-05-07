@@ -1,0 +1,39 @@
+# From https://github.com/upbound/provider-terraform/blob/main/examples/transition/definition.yaml
+# This is the "interface", which Compositions can fulfill.
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xstrings.fedcloud.gsa.gov
+spec:
+  group: fedcloud.gsa.gov
+  names:
+    kind: XString
+    plural: xstrings
+  claimNames:
+    kind: String
+    plural: strings
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                inputString:
+                  type: string
+              required:
+                - inputString
+            status:
+              description: A Status represents the observed state
+              properties:
+                share:
+                  description: Freeform field containing status information
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+              type: object
+  connectionSecretKeys:
+    - result
