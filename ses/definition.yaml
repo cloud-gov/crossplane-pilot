@@ -1,0 +1,43 @@
+# From https://github.com/upbound/provider-terraform/blob/main/examples/transition/definition.yaml
+# This is the "interface", which Compositions can fulfill.
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xawssimpleemailservices.fedcloud.gsa.gov
+spec:
+  group: fedcloud.gsa.gov
+  names:
+    kind: XAWSSimpleEmailService
+    plural: xawssimpleemailservices
+    shortNames:
+      - xawsses
+  claimNames:
+    kind: AWSSimpleEmailService
+    plural: awssimpleemailservices
+    shortNames:
+      - awsses
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                domain:
+                  type: string
+                adminEmail:
+                  type: string
+              required:
+                - adminEmail
+            status:
+              description: A Status represents the observed state
+              properties:
+                share:
+                  description: Freeform field containing status information
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
+              type: object

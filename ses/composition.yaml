@@ -1,0 +1,53 @@
+# From https://github.com/upbound/provider-terraform/blob/main/examples/transition/01-composition-tf-only/composition.yaml
+# This is an implementation of the CompositeResourceDefinition. The spec.compositeTypeRef connects the two.
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: opentofu-xawssimpleemailservice.fedcloud.gsa.gov
+  labels:
+    provider: opentofu
+    implementation: opentofu
+spec:
+  compositeTypeRef:
+    apiVersion: fedcloud.gsa.gov/v1alpha1
+    kind: XAWSSimpleEmailService
+  resources:
+    - name: opentofu-resource
+      base:
+        apiVersion: opentofu.upbound.io/v1beta1
+        kind: Workspace
+        spec:
+          forProvider:
+            source: Remote
+            # URL spec: https://developer.hashicorp.com/terraform/language/modules/sources#modules-in-package-sub-directories
+            module: git::https://github.com/cloud-gov/csb//brokerpaks/aws-ses/terraform/provision?ref=ses-topic
+            varFiles:
+              - secretKeyRef:
+                  name: xawssimpleemailservice-vars
+                  namespace: crossplane-system
+                  key: terraform.tfvars
+                source: SecretKey
+            vars:
+              # WARNING: Preserve the order of this list. Items in .spec.resources[].patches[].toFieldPath rely on this order.
+              - key: domain
+                value: "" # default to empty if nothing is patched
+              - key: admin_email
+              - key: instance_id
+          providerConfigRef:
+            name: opentofu-noauth # Provider configuration is done in-module; do not use the default providerconfig, to avoid a "duplicate provider configuration" error.
+      patches:
+        # Vars required by the OpenTofu module.
+        - fromFieldPath: spec.domain
+          toFieldPath: spec.forProvider.vars[0].value
+          policy:
+            fromFieldPath: Optional
+        - fromFieldPath: spec.adminEmail
+          toFieldPath: spec.forProvider.vars[1].value
+        - fromFieldPath: metadata.uid
+          toFieldPath: spec.forProvider.vars[2].value
+        # Fields required to create connection Secret.
+        # XR is cluster-scoped, so no namespace, but preserves the namespace & name of its related claim in labels.
+        - fromFieldPath: metadata.labels["crossplane.io/claim-name"]
+          toFieldPath: spec.writeConnectionSecretToRef.name
+        - fromFieldPath: metadata.labels["crossplane.io/claim-namespace"]
+          toFieldPath: spec.writeConnectionSecretToRef.namespace

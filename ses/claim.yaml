@@ -1,0 +1,10 @@
+apiVersion: fedcloud.gsa.gov/v1alpha1
+kind: AWSSimpleEmailService
+metadata:
+  name: james-test-identity
+spec:
+  domain: test-agency.gov
+  adminEmail: james.hochadel@gsa.gov
+  compositionSelector:
+    matchLabels:
+      implementation: opentofu

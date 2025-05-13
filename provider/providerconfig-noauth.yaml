@@ -1,7 +1,9 @@
+# Configure the provider with a backend for storing state, but no credentials for its providers.
+# This is necessary for the AWSSimpleEmailService composition because the associated Terraform expects AWS credentials to be passed as TF vars.
 apiVersion: opentofu.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
-  name: default
+  name: opentofu-noauth
 spec:
   # Note that unlike most provider configs this one supports an array of
   # credentials. This is because each tofu workspace uses a single
@@ -39,10 +41,4 @@ spec:
         namespace         = "default"
         in_cluster_config = true
       }
-    }
-    // Configure AWS provider with credentials.
-    provider "aws" {
-      shared_credentials_files = [ "${path.module}/aws-creds.ini" ]
-      shared_config_files = [ "${path.module}/aws-config.ini" ]
-      region = "us-east-1"
     }
