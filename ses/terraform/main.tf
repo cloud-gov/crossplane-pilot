@@ -97,26 +97,32 @@ module "bind" {
 
 output "smtp_password" {
   value = module.bind.smtp_password
+  sensitive = true
 }
 
 output "smtp_user" {
   value = module.bind.smtp_user
+  sensitive = true
 }
 
 output "smtp_server" {
   value = module.bind.smtp_server
+  sensitive = true
 }
 
 output "aws_access_key_id" {
   value = module.bind.aws_access_key_id
+  sensitive = true
 }
 
 output "aws_secret_access_key" {
   value = module.bind.aws_secret_access_key
+  sensitive = true
 }
 
 output "aws_region" {
   value = var.aws_region
+  sensitive = true
 }
 
 output "instructions" {
