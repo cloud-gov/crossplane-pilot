@@ -92,7 +92,6 @@ module "bind" {
   region = var.aws_region
   service_offering_name = local.service_offering_name
   service_plan_name = local.service_plan_name
-  user_name = var.instance_id
 }
 
 output "smtp_password" {
