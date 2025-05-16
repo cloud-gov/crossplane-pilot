@@ -1,9 +1,9 @@
 apiVersion: fedcloud.gsa.gov/v1alpha1
 kind: AWSSimpleEmailService
 metadata:
-  name: james-test-identity
+  name: pilot-demo
 spec:
-  domain: test-agency.gov
+  domain: pilot-demo-domain.gov
   adminEmail: james.hochadel@gsa.gov
   compositionSelector:
     matchLabels:
